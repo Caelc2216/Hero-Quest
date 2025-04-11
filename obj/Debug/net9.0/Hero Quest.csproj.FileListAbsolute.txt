@@ -1,0 +1,14 @@
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\bin\Debug\net9.0\Hero Quest.exe
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\bin\Debug\net9.0\Hero Quest.deps.json
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\bin\Debug\net9.0\Hero Quest.runtimeconfig.json
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\bin\Debug\net9.0\Hero Quest.dll
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\bin\Debug\net9.0\Hero Quest.pdb
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.AssemblyInfoInputs.cache
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.AssemblyInfo.cs
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.csproj.CoreCompileInputs.cache
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.dll
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\refint\Hero Quest.dll
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.pdb
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.genruntimeconfig.cache
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\ref\Hero Quest.dll
