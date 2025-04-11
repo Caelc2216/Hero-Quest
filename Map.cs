@@ -200,13 +200,13 @@
         pathRooms.Remove(start);
         pathRooms.Remove(end);
 
-        Random rand2 = new Random(4);
+        Random rand2 = new Random();
         var path = new List<Room>();
         //starts with start
         path.Add(start);
 
         //Add random rooms in between
-        for (int i = 0; i < rand2.Next(); i++)
+        for (int i = 0; i < rand2.Next(21); i++)
         {
             path.Add(pathRooms[rand2.Next(pathRooms.Count)]);
         }
@@ -223,15 +223,22 @@
         //Add random paths between rooms
         foreach (var room in rooms)
         {
+            int connections = rand.Next(0,8);
+            int connectionsCount = 0;
             foreach (var to in rooms)
             {
-                if (room.Name != to.Name && !HasPath(room, to) && rand.NextDouble() < edgeProbability)
+                if (room.Name != to.Name && !HasPath(room, to))
                 {
                     AddPath(room, new Edge(to));
+                    connectionsCount++;
                 }
                 if (HasPath(room, room))
                 {
                     RemovePath(room, room);
+                }
+                if (connectionsCount >= connections)
+                {
+                    break;
                 }
             }
         }

@@ -19,12 +19,24 @@ public class Hero
     {
         foreach (var item in inventory.newItems)
         {
-            Strength += item.Seffect;
-            Agility += item.Aeffect;
-            Intelligence += item.Ieffect;
-            Health += item.Heffect;
+            if (!item.EffectOnUse)
+            {
+                Strength += item.Seffect;
+                Agility += item.Aeffect;
+                Intelligence += item.Ieffect;
+                Health += item.Heffect;
+            }
         }
-            inventory.newItems.Clear();
+        inventory.newItems.Clear();
+        Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine($"Hero stats updated: Strength: {Strength}, Agility: {Agility}, Intelligence: {Intelligence}, Health: {Health}");
+        Console.ResetColor();
+    }
+
+    public void DisplayStats()
+    {
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"Hero Stats: Strength: {Strength}, Agility: {Agility}, Intelligence: {Intelligence}, Health: {Health}");
+        Console.ResetColor();
     }
 }

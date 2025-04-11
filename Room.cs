@@ -6,6 +6,8 @@ public class Room
     public int Number { get; set; }
     public bool IsStart { get; set; }
     public bool IsExit { get; set; }
+    public bool Looted = false;
+    public bool ChallengeFinished = false;
     public List<Item> possibleLoot { get; set; } = [
         new Item("Medium Health Potion", true, heffect: 10, type: Item.ItemType.Potion),
         new Item("Large Health Potion", true, heffect: 15, type: Item.ItemType.Potion),
@@ -23,6 +25,11 @@ public class Room
 
     public List<Item> LootRoom()
     {
+        if (Looted)
+        {
+            Console.WriteLine("This room has already been looted.");
+            return new List<Item>();
+        }
         Random rand = new Random();
         int lootCount = rand.Next(1, 4); 
         List<Item> loot = new List<Item>();
@@ -33,6 +40,7 @@ public class Room
             loot.Add(randomItem);
             possibleLoot.RemoveAt(randomIndex); 
         }
+        Looted = true;
         return loot;
     }
 }

@@ -12,3 +12,4 @@ C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\D
 C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.pdb
 C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.genruntimeconfig.cache
 C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\ref\Hero Quest.dll
+C:\Users\caelc\Documents\Spring 2025\Data Stuctures\Assignments\Hero Quest\obj\Debug\net9.0\Hero Quest.sourcelink.json

@@ -24,7 +24,10 @@ while (true)
 {
     Console.Clear();
     visitedRooms.Push(currentRoom);
+    Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine("Current Room: " + currentRoom?.Name);
+    Console.ResetColor();
+    hero.DisplayStats();
     Console.WriteLine(@"What do you want to do?
 1. Move to another room
 2. View inventory
@@ -36,8 +39,11 @@ while (true)
     switch (keyInfo.Key)
     {
         case ConsoleKey.D1:
-        Console.Clear();
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Current Room: " + currentRoom?.Name);
+            Console.ResetColor();
+            hero.DisplayStats();
             DisplayRooms(m.AdjacencyList, currentRoom);
             Console.WriteLine("Enter the room number you want to move to:");
             string input = Console.ReadLine();
@@ -56,7 +62,10 @@ while (true)
             break;
         case ConsoleKey.D2:
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Current Room: " + currentRoom?.Name);
+            Console.ResetColor();
+            hero.DisplayStats();
             inventory.ViewInventory();
             inventory.InventorySelection(hero);
             Console.WriteLine("Press any key to continue...");
@@ -64,7 +73,10 @@ while (true)
             break;
         case ConsoleKey.D3:
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Current Room: " + currentRoom?.Name);
+            Console.ResetColor();
+            hero.DisplayStats();
             Loot();
             Console.WriteLine("Looting completed. Press any key to continue...");
             Console.ReadKey(true);
@@ -85,7 +97,7 @@ void StartGame()
     Console.WriteLine("Welcome to Hero's Quest!");
     inventory.InitializeInventory();
     hero.UpdateHeroStats();
-    challenges.InitializeTree(numberOfChallenges: 20);
+    challenges.InitializeTree(numberOfChallenges: 80);
 }
 
 void DisplayRooms(Dictionary<Room, List<Room>> adjacencyList, Room currentRoom)
@@ -116,6 +128,13 @@ bool MoveToRoom(Dictionary<Room, List<Room>> adjacencyList, Room currentRoom, st
                 }
                 currentRoom = room;
                 Console.WriteLine($"Moved to {room.Name}.");
+                if (visitedRooms.Contains(room) && room.ChallengeFinished)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You have already completed the challenge in this room.");
+                    Console.ResetColor();
+                    return true;
+                }
                 GetChallenge(currentRoom);
                 return true;
             }
@@ -129,7 +148,9 @@ void GetChallenge(Room room)
 {
     if (room.IsExit)
     {
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("You have reached the exit! Congratulations!");
+        Console.ResetColor();
         Environment.Exit(0);
     }
     else
@@ -139,6 +160,10 @@ void GetChallenge(Room room)
         Console.ReadKey(true);
         Challenge c = challenges.ClosestNode(room.Number);
         StartChallenge(c);
+        if (c.Type == ChallengeType.Puzzle || c.Type == ChallengeType.Combat)
+        {
+            room.ChallengeFinished = true;
+        }
     }
 }
 
@@ -152,12 +177,16 @@ void StartChallenge(Challenge challenge)
         Console.WriteLine($"Requires intelligence greater than or equal to {challenge.Difficulty}");
         if (hero.Intelligence >= challenge.Difficulty)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("You solved the puzzle!");
+            Console.ResetColor();
             hero.UpdateHeroStats();
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"You failed to solve the puzzle. You lost {challenge.Difficulty - hero.Intelligence} health");
+            Console.ResetColor();
             hero.Health -= challenge.Difficulty - hero.Intelligence;
             hero.UpdateHeroStats();
         }
@@ -168,31 +197,56 @@ void StartChallenge(Challenge challenge)
         Console.WriteLine($"Requires strength greater than or equal to {challenge.Difficulty}");
         if (hero.Strength >= challenge.Difficulty)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("You defeated the enemy!");
+            Console.ResetColor();
             hero.UpdateHeroStats();
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"You failed to defeat the enemy. You lost {challenge.Difficulty - hero.Strength} health");
+            Console.ResetColor();
+            hero.Health -= challenge.Difficulty - hero.Strength;
             hero.UpdateHeroStats();
         }
     }
 
-    // Trap
-    else
+    else if (challenge.Type == ChallengeType.Trap)
     {
         Console.WriteLine($"You have come across a trap!");
         Console.WriteLine($"Requires agility greater than or equal to {challenge.Difficulty}");
         if (hero.Agility >= challenge.Difficulty)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("You avoided the trap!");
+            Console.ResetColor();
             hero.UpdateHeroStats();
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"You failed to avoid the trap. You lost {challenge.Difficulty - hero.Agility} health");
+            Console.ResetColor();
+            hero.Health -= challenge.Difficulty - hero.Agility;
             hero.UpdateHeroStats();
         }
+    }
+    if (hero.Health <= 0)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("You have died. Game over.");
+        Console.ResetColor();
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey(true);
+        Console.WriteLine("Correct Path: ");
+        foreach (var room in pathOut)
+        {
+            Console.WriteLine(room.Name);
+        }
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey(true);
+        Environment.Exit(0);
     }
     challenges.DeleteNode(challenge);
     challenges.Rebalance();
@@ -203,6 +257,11 @@ void StartChallenge(Challenge challenge)
 void Loot()
 {
     List<Item> lootFound = currentRoom.LootRoom();
+    if (lootFound.Count == 0)
+    {
+        Console.WriteLine("No loot found in this room.");
+        return;
+    }
     Console.WriteLine("You found the following items:");
     for (int i = 0; i < lootFound.Count; i++)
     {
@@ -214,18 +273,33 @@ void Loot()
     {
         for (int i = 0; i < numberOfItems; i++)
         {
+            Console.Clear();
+            for (int j = 0; j < lootFound.Count; j++)
+            {
+                Console.WriteLine($"{j + 1}. {lootFound[j].Name}");
+            }
             Console.WriteLine($"Enter the number of the item you want to take (1-{lootFound.Count}):");
             string itemInput = Console.ReadLine();
             if (int.TryParse(itemInput, out int itemIndex) && itemIndex >= 1 && itemIndex <= lootFound.Count)
             {
                 Item selectedItem = lootFound[itemIndex - 1];
                 inventory.AddItem(selectedItem);
-                Console.WriteLine($"You took {selectedItem.Name}.");
-                lootFound.RemoveAt(itemIndex - 1); // Remove the item from the loot list
+                if (inventory.items.Contains(selectedItem))
+                {
+
+                    Console.WriteLine($"You took {selectedItem.Name}.");
+                    hero.UpdateHeroStats();
+                    lootFound.RemoveAt(itemIndex - 1); // Remove the item from the loot list
+                }
+                else
+                {
+                    inventory.AddItem(selectedItem);
+                }
             }
             else
             {
                 Console.WriteLine("Invalid item number. Please try again.");
+
             }
         }
     }

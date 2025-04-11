@@ -20,7 +20,8 @@ public class Inventory
         }
         else
         {
-            Console.WriteLine("Inventory is full. Oldest item will be removed. Do you want to proceed? (y/n)");
+            string oldestItem = items.Peek().Name;
+            Console.WriteLine($"Inventory is full. {oldestItem} will be removed. Do you want to proceed? (y/n)");
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             if (keyInfo.Key != ConsoleKey.Y)
             {
@@ -29,18 +30,19 @@ public class Inventory
             }
             items.Dequeue();
             items.Enqueue(item);
-            Console.WriteLine($"{item.Name} has been added to the inventory. Oldest item removed.");
+            Console.WriteLine($"{item.Name} has been added to the inventory. {oldestItem} removed.");
         }
     }
 
     public void ViewInventory()
     {
         Console.WriteLine("Inventory:");
-        Console.WriteLine($"{"Name", -20}{"Agility",-10}{"Intelligence",-15}{"Strength",-10}{"Health", -10}{"Type", -20}");
+        Console.WriteLine($"{"Name", -20}{"Agility",-10}{"Intelligence",-15}{"Strength",-10}{"Health", -10}{"Type", -20}{"Usable/Passive Effect",-25}");
         Console.WriteLine("--------------------------------------------------------------------------------------------------");
         foreach (var item in items)
         {
-            Console.WriteLine($"{item.Name,-20} {item.Aeffect, -10} {item.Ieffect,-15} {item.Seffect,-10} {item.Heffect,-10} {item.Type,-20}");
+            string use = item.EffectOnUse? "Usable" : "Passive Effect";
+            Console.WriteLine($"{item.Name,-20} {item.Aeffect, -10} {item.Ieffect,-15} {item.Seffect,-10} {item.Heffect,-10} {item.Type,-20}{use, -25}");
         }
     }
 
@@ -90,13 +92,26 @@ public class Inventory
 
         if ((itemToUse.Type == Item.ItemType.Potion || itemToUse.Type == Item.ItemType.Miscellaneous) && itemToUse.EffectOnUse == true)
         {
+            Queue<Item> tempQueue = new Queue<Item>();
             Console.WriteLine($"Using {itemToUse.Name}...");
             h.Strength += itemToUse.Seffect;
             h.Agility += itemToUse.Aeffect;
             h.Intelligence += itemToUse.Ieffect;
             h.Health += itemToUse.Heffect;
             h.UpdateHeroStats();
-            items.Dequeue();
+            foreach (var item in items)
+            {
+                if (item.Name != itemToUse.Name)
+                {
+                    tempQueue.Enqueue(item);
+                }
+            }
+            items.Clear();
+            foreach (var item in tempQueue)
+            {
+                items.Enqueue(item);
+            }
+            tempQueue.Clear();
             Console.WriteLine($"{itemToUse.Name} has been used and removed from the inventory.");
         }
         else
