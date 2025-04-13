@@ -223,7 +223,7 @@
         //Add random paths between rooms
         foreach (var room in rooms)
         {
-            int connections = rand.Next(0,8);
+            int connections = rand.Next(0, 8);
             int connectionsCount = 0;
             foreach (var to in rooms)
             {
@@ -242,8 +242,33 @@
                 }
             }
         }
+
+        CanReachExit(rooms, start, end);
         return path;
 
+    }
+
+    public void CanReachExit(List<Room> rooms, Room start, Room end)
+    {
+        List<Room> canReachExit = new List<Room>();
+        List<Room> cannotReach = new List<Room>();
+        foreach (var room in rooms)
+        {
+            if (BFS(room, end))
+            {
+                canReachExit.Add(room);
+            }
+            else
+            {
+                cannotReach.Add(room);
+            }
+        }
+
+        for (int i = 0; i < cannotReach.Count; i++)
+        {
+            Random rand = new ();
+            AddPath(cannotReach[i], new Edge(canReachExit[rand.Next(canReachExit.Count)]));
+        }
     }
 }
 
