@@ -1,17 +1,17 @@
 ﻿public class Map
 {
-    public Dictionary<Room, List<Room>> AdjacencyList { get; set; }
+    public Dictionary<Room, List<Edge>> AdjacencyList { get; set; }
 
     public Map()
     {
-        AdjacencyList = new Dictionary<Room, List<Room>>();
+        AdjacencyList = new Dictionary<Room, List<Edge>>();
     }
 
     public void AddRoom(Room room)
     {
         if (!AdjacencyList.ContainsKey(room))
         {
-            AdjacencyList[room] = new List<Room>();
+            AdjacencyList[room] = new List<Edge>();
         }
     }
 
@@ -19,9 +19,9 @@
     {
         if (AdjacencyList.ContainsKey(room1)) /* if directional delete && AdjacencyList.ContainsKey(vertex2) */
         {
-            if (!AdjacencyList[room1].Contains(path.To))
+            if (!AdjacencyList[room1].Contains(path))
             {
-                AdjacencyList[room1].Add(path.To);
+                AdjacencyList[room1].Add(path);
             }
         }
     }
@@ -38,7 +38,7 @@
         {
             for (int i = 0; i < r.Value.Count; i++)
             {
-                if (r.Value[i] == room)
+                if (r.Value[i].To == room)
                 {
                     r.Value.RemoveAt(i);
                 }
@@ -51,7 +51,14 @@
 
     public bool HasPath(Room startVertex, Room endVertex)
     {
-        return AdjacencyList[startVertex].Contains(endVertex);
+        foreach (var edge in AdjacencyList[startVertex])
+        {
+            if (edge.To == endVertex)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public bool HasRoom(Room vertex)
@@ -94,11 +101,11 @@
 
             foreach (var vertex in AdjacencyList[currentVertex])
             {
-                if (!visited.Contains(vertex))
+                if (!visited.Contains(vertex.To))
                 {
-                    queue.Enqueue(vertex);
-                    visited.Add(vertex);
-                    parent[vertex] = currentVertex;
+                    queue.Enqueue(vertex.To);
+                    visited.Add(vertex.To);
+                    parent[vertex.To] = currentVertex;
                 }
             }
         }
@@ -130,9 +137,9 @@
 
         foreach (var vertex in AdjacencyList[currentVertex])
         {
-            if (!visited.Contains(vertex))
+            if (!visited.Contains(vertex.To))
             {
-                if (DepthFirstSearchRecursive(vertex, target, visited, path))
+                if (DepthFirstSearchRecursive(vertex.To, target, visited, path))
                 {
                     return true;
                 }
@@ -143,7 +150,14 @@
 
     public void RemovePath(Room startVertex, Room endVertex)
     {
-        AdjacencyList[startVertex].Remove(endVertex);
+        foreach (var edge in AdjacencyList[startVertex])
+        {
+            if (edge.To == endVertex)
+            {
+                AdjacencyList[startVertex].Remove(edge);
+                break;
+            }
+        }
     }
 
     public void DisplayMap()
@@ -153,7 +167,7 @@
             Console.Write($"{vertex.Key.Name}: ");
             foreach (var edge in vertex.Value)
             {
-                Console.Write($"{edge.Name} ");
+                Console.Write($"{edge.To.Name} ");
             }
             Console.WriteLine();
             Console.WriteLine();
@@ -206,7 +220,7 @@
         path.Add(start);
 
         //Add random rooms in between
-        for (int i = 0; i < rand2.Next(21); i++)
+        for (int i = 0; i < rand2.Next(10, 16); i++)
         {
             path.Add(pathRooms[rand2.Next(pathRooms.Count)]);
         }

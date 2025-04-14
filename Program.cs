@@ -59,6 +59,11 @@ while (true)
                     }
                 }
             }
+            else
+            {
+                Console.WriteLine("You didn't move to this room. Press any key to continue...");
+                Console.ReadKey(true);
+            }
             break;
         case ConsoleKey.D2:
             Console.Clear();
@@ -100,24 +105,29 @@ void StartGame()
     challenges.InitializeTree(numberOfChallenges: 80);
 }
 
-void DisplayRooms(Dictionary<Room, List<Room>> adjacencyList, Room currentRoom)
+void DisplayRooms(Dictionary<Room, List<Edge>> adjacencyList, Room currentRoom)
 {
     Console.WriteLine("Available rooms to move to:");
     foreach (var room in adjacencyList[currentRoom])
     {
-        Console.WriteLine($"Room {room.Number}");
+        Console.WriteLine($"Room {room.To.Number}");
     }
 }
 
-bool MoveToRoom(Dictionary<Room, List<Room>> adjacencyList, Room currentRoom, string input)
+bool MoveToRoom(Dictionary<Room, List<Edge>> adjacencyList, Room currentRoom, string input)
 {
     if (int.TryParse(input, out int roomNumber))
     {
         foreach (var room in adjacencyList[currentRoom])
         {
-            if (room.Number == roomNumber)
+            if (room.To.Number == roomNumber)
             {
-                if (visitedRooms.Contains(room))
+                bool requirementsPassed = CheckRequirements(room.To);
+                if (!requirementsPassed)
+                {
+                    return false;
+                }
+                if (visitedRooms.Contains(room.To))
                 {
                     Console.WriteLine("You have already visited this room. Do you want to move there again? (y/n)");
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
@@ -126,9 +136,9 @@ bool MoveToRoom(Dictionary<Room, List<Room>> adjacencyList, Room currentRoom, st
                         return false;
                     }
                 }
-                currentRoom = room;
-                Console.WriteLine($"Moved to {room.Name}.");
-                if (visitedRooms.Contains(room) && room.ChallengeFinished)
+                currentRoom = room.To;
+                Console.WriteLine($"Moved to {room.To.Name}.");
+                if (visitedRooms.Contains(room.To) && room.To.ChallengeFinished)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("You have already completed the challenge in this room.");
@@ -148,6 +158,11 @@ void GetChallenge(Room room)
 {
     if (room.IsExit)
     {
+        Console.WriteLine("You have found the exit but first you need to complete the challenge!");
+        Console.WriteLine("Press any key to start the challenge...");
+        Console.ReadKey(true);
+        Challenge c = challenges.ClosestNode(room.Number);
+
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("You have reached the exit! Congratulations!");
         Console.ResetColor();
@@ -307,5 +322,31 @@ void Loot()
     {
         Console.WriteLine("Invalid number of items. Please try again.");
     }
+
+}
+bool CheckRequirements(Room moveTo)
+{
+    foreach (var Edge in m.AdjacencyList[currentRoom])
+    {
+        if (Edge.To.Name == moveTo.Name)
+        {
+            if (Edge.RequirementStat == Edge.Stat.Strength && hero.Strength < Edge.Requirement)
+            {
+                Console.WriteLine($"You need at least {Edge.Requirement} strength to move to {moveTo.Name}.");
+                return false;
+            }
+            else if (Edge.RequirementStat == Edge.Stat.Agility && hero.Agility < Edge.Requirement)
+            {
+                Console.WriteLine($"You need at least {Edge.Requirement} agility to move to {moveTo.Name}.");
+                return false;
+            }
+            else if (Edge.RequirementStat == Edge.Stat.Intelligence && hero.Intelligence < Edge.Requirement)
+            {
+                Console.WriteLine($"You need at least {Edge.Requirement} intelligence to move to {moveTo.Name}.");
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
