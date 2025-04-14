@@ -306,10 +306,6 @@ void Loot()
                     hero.UpdateHeroStats();
                     lootFound.RemoveAt(itemIndex - 1); // Remove the item from the loot list
                 }
-                else
-                {
-                    inventory.AddItem(selectedItem);
-                }
             }
             else
             {
