@@ -333,20 +333,47 @@ bool CheckRequirements(Room moveTo)
             if (Edge.RequirementStat == Edge.Stat.Strength && hero.Strength < Edge.Requirement)
             {
                 Console.WriteLine($"You need at least {Edge.Requirement} strength to move to {moveTo.Name}.");
-                return false;
+
+                return UseLockPick();
             }
             else if (Edge.RequirementStat == Edge.Stat.Agility && hero.Agility < Edge.Requirement)
             {
                 Console.WriteLine($"You need at least {Edge.Requirement} agility to move to {moveTo.Name}.");
-                return false;
+                return UseLockPick();
             }
             else if (Edge.RequirementStat == Edge.Stat.Intelligence && hero.Intelligence < Edge.Requirement)
             {
                 Console.WriteLine($"You need at least {Edge.Requirement} intelligence to move to {moveTo.Name}.");
-                return false;
+                return UseLockPick();
             }
         }
     }
     return true;
+}
+
+bool UseLockPick()
+{
+    foreach(Item i in inventory.items)
+    {
+        if (i.Name == "Lockpick")
+        {
+            Console.WriteLine("You have a lockpick. Do you want to use it? (y/n)");
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            if (keyInfo.Key == ConsoleKey.Y)
+            {
+                inventory.RemoveItem(i, hero);
+                Console.WriteLine("You used the lockpick. You can now move to this room.");
+                return true;
+            }
+            else if (keyInfo.Key == ConsoleKey.N)
+            {
+                return false;
+            }
+        }
+    }
+    Console.WriteLine("You don't have a lockpick or you chose not to use it. You cannot move to this room.");
+    Console.WriteLine("Press any key to continue...");
+    Console.ReadKey(true);
+    return false;
 }
 

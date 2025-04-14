@@ -21,6 +21,7 @@ public class Room
         new Item("Ring of Agility", false, aeffect: 5, type: Item.ItemType.Miscellaneous),
         new Item("Ring of Intelligence", false, ieffect: 5, type: Item.ItemType.Miscellaneous),
         new Item("Ring of Health", false, heffect: 5, type: Item.ItemType.Miscellaneous),
+        new Item("Lockpick", true, type: Item.ItemType.Miscellaneous),
     ];
 
     public List<Item> LootRoom()

@@ -56,7 +56,8 @@ public class Inventory
     {
         Console.WriteLine(@"What do you want to do?
         1. Use item
-        2. Exit inventory");
+        2. Remove item
+        3. Exit inventory");
         ConsoleKeyInfo keyInfo = Console.ReadKey(true);
         switch (keyInfo.Key)
         {
@@ -64,6 +65,11 @@ public class Inventory
                 UseItem(h);
                 break;
             case ConsoleKey.D2:
+                Item item = SelectItem(h);
+                RemoveItem(item, h);
+                h.UpdateHeroStats();
+                break;
+            case ConsoleKey.D3:
                 Console.WriteLine("Exiting inventory...");
                 break;
             default:
@@ -73,27 +79,7 @@ public class Inventory
     }
     public void UseItem(Hero h)
     {
-        if (items.Count == 0)
-        {
-            Console.WriteLine("No items in inventory to use.");
-            return;
-        }
-        Console.WriteLine("Enter the name of the item you want to use:");
-        string itemName = Console.ReadLine();
-        Item itemToUse = null;
-        if (itemName == null || itemName == "")
-        {
-            Console.WriteLine("Invalid item name. Please try again.");
-            return;
-        }
-        foreach (var item in items)
-        {
-            if (item.Name == itemName)
-            {
-                itemToUse = item;
-                break;
-            }
-        }
+        Item itemToUse = SelectItem(h);
         if (itemToUse != null)
         {
             if ((itemToUse.Type == Item.ItemType.Potion || itemToUse.Type == Item.ItemType.Miscellaneous) && itemToUse.EffectOnUse == true)
@@ -125,5 +111,77 @@ public class Inventory
         {
             Console.WriteLine("Invalid item type. Cannot use this item.");
         }
+    }
+
+    public void RemoveItem(Item item, Hero h)
+    {
+        if (items.Contains(item))
+        {
+            Queue<Item> tempQueue = new Queue<Item>();
+            foreach (var i in items)
+            {
+                if (i.Name != item.Name)
+                {
+                    tempQueue.Enqueue(i);
+                }
+            }
+            items.Clear();
+            foreach (var i in tempQueue)
+            {
+                items.Enqueue(i);
+            }
+
+            if (item.EffectOnUse == false)
+            {
+                if(item.Aeffect != 0)
+                {
+                    h.Agility -= item.Aeffect;
+                }
+                if(item.Ieffect != 0)
+                {
+                    h.Intelligence -= item.Ieffect;
+                }
+                if(item.Seffect != 0)
+                {
+                    h.Strength -= item.Seffect;
+                }
+                if(item.Heffect != 0)
+                {
+                    h.Health -= item.Heffect;
+                }
+            }
+            Console.WriteLine($"{item.Name} has been removed from the inventory.");
+        }
+        else
+        {
+            Console.WriteLine($"{item.Name} is not in the inventory.");
+        }
+
+    }
+
+    public Item SelectItem(Hero h)
+    {
+        if (items.Count == 0)
+        {
+            Console.WriteLine("No items in inventory.");
+            return null;
+        }
+        Console.WriteLine("Enter the name of the item you want to select:");
+        string itemName = Console.ReadLine();
+        Item itemToUse = null;
+        if (itemName == null || itemName == "")
+        {
+            Console.WriteLine("Invalid item name. Please try again.");
+            return null;
+        }
+        foreach (var item in items)
+        {
+            if (item.Name == itemName)
+            {
+                itemToUse = item;
+                return itemToUse;
+            }
+        }
+        return null;
     }
 }
