@@ -3,6 +3,8 @@ CustomBinaryTree challenges = new CustomBinaryTree();
 Inventory inventory = new Inventory();
 Hero hero = new Hero(1, 1, 1, 20, inventory);
 List<Room> pathOut = m.InitializeMap(20, 0.002);
+Room previousRoom = null;
+List<Room> deadEnds = new List<Room>();
 Stack<Room> visitedRooms = new Stack<Room>();
 
 
@@ -54,6 +56,7 @@ while (true)
                 {
                     if (room.Number.ToString() == input)
                     {
+                        previousRoom = currentRoom;
                         currentRoom = room;
                         break;
                     }
@@ -102,15 +105,37 @@ void StartGame()
     Console.WriteLine("Welcome to Hero's Quest!");
     inventory.InitializeInventory();
     hero.UpdateHeroStats();
-    challenges.InitializeTree(numberOfChallenges: 80);
+    challenges.InitializeTree(numberOfChallenges: 30);
 }
 
 void DisplayRooms(Dictionary<Room, List<Edge>> adjacencyList, Room currentRoom)
 {
     Console.WriteLine("Available rooms to move to:");
+    List<Room> availableRooms = new List<Room>();
     foreach (var room in adjacencyList[currentRoom])
     {
-        Console.WriteLine($"Room {room.To.Number}");
+        if (deadEnds.Contains(room.To))
+        {
+            continue;
+        }
+        availableRooms.Add(room.To);
+    }
+    if (availableRooms.Count == 1 && availableRooms[0] == previousRoom)
+    {
+        deadEnds.Add(currentRoom);
+    }
+    foreach (var room in availableRooms)
+    {
+        if (visitedRooms.Contains(room))
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Room {room.Number}");
+            Console.ResetColor();
+        }
+        else
+        {
+            Console.WriteLine($"Room {room.Number}");
+        }
     }
 }
 
@@ -156,12 +181,32 @@ bool MoveToRoom(Dictionary<Room, List<Edge>> adjacencyList, Room currentRoom, st
 
 void GetChallenge(Room room)
 {
+    if (challenges == null)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("You have ran out of challenges. Game over.");
+        Console.ResetColor();
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey(true);
+        Console.WriteLine("Correct Path: ");
+        foreach (var r in pathOut)
+        {
+            Console.WriteLine(r.Name);
+        }
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey(true);
+        Environment.Exit(0);
+    }
     if (room.IsExit)
     {
         Console.WriteLine("You have found the exit but first you need to complete the challenge!");
         Console.WriteLine("Press any key to start the challenge...");
         Console.ReadKey(true);
-        Challenge c = challenges.ClosestNode(room.Number);
+        if (room.challenge == null)
+        {
+            room.challenge = challenges.ClosestNode(room.Number);
+            StartChallenge(room.challenge);
+        }
 
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("You have reached the exit! Congratulations!");
@@ -173,9 +218,12 @@ void GetChallenge(Room room)
         Console.WriteLine($"You have entered {room.Name}. Prepare for a challenge!");
         Console.WriteLine("Press any key to start the challenge...");
         Console.ReadKey(true);
-        Challenge c = challenges.ClosestNode(room.Number);
-        StartChallenge(c);
-        if (c.Type == ChallengeType.Puzzle || c.Type == ChallengeType.Combat)
+        if (room.challenge == null)
+        {
+            room.challenge = challenges.ClosestNode(room.Number);
+        }
+        StartChallenge(room.challenge);
+        if (room.challenge != null && (room.challenge.Type == ChallengeType.Puzzle || room.challenge.Type == ChallengeType.Combat))
         {
             room.ChallengeFinished = true;
         }
@@ -185,6 +233,11 @@ void GetChallenge(Room room)
 void StartChallenge(Challenge challenge)
 {
     Console.Clear();
+    if (challenge == null)
+    {
+        Console.WriteLine("Challenge is null");
+        return;
+    }
     Console.WriteLine($"Challenge: {challenge.Type} - Difficulty: {challenge.Difficulty}");
     if (challenge.Type == ChallengeType.Puzzle)
     {
@@ -349,7 +402,7 @@ bool CheckRequirements(Room moveTo)
 
 bool UseLockPick()
 {
-    foreach(Item i in inventory.items)
+    foreach (Item i in inventory.items)
     {
         if (i.Name == "Lockpick")
         {

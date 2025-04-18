@@ -223,6 +223,7 @@
         for (int i = 0; i < rand2.Next(10, 16); i++)
         {
             path.Add(pathRooms[rand2.Next(pathRooms.Count)]);
+            pathRooms.Remove(path[path.Count - 1]);
         }
 
         //Add end

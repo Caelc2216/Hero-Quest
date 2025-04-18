@@ -8,6 +8,7 @@ public class Room
     public bool IsExit { get; set; }
     public bool Looted = false;
     public bool ChallengeFinished = false;
+    public Challenge challenge = null;
     public List<Item> loot = new List<Item>();
     public List<Item> possibleLoot { get; set; } = [
         new Item("Medium Health Potion", true, heffect: 10, type: Item.ItemType.Potion),
@@ -33,7 +34,7 @@ public class Room
             return loot;
         }
         Random rand = new Random();
-        int lootCount = rand.Next(1, 4); 
+        int lootCount = rand.Next(0, 4); 
         for (int i = 0; i < lootCount; i++)
         {
             int randomIndex = rand.Next(possibleLoot.Count);

@@ -50,6 +50,18 @@ public class CustomBinaryTree
         InOrderTraversal(node.Right);
     }
 
+    public void InOrderTraversalList(Challenge? node, List<Challenge> challengesInOrder)
+    {
+        if (node == null)
+        {
+            return;
+        }
+
+        InOrderTraversalList(node.Left, challengesInOrder);
+        challengesInOrder.Add(node);
+        InOrderTraversalList(node.Right, challengesInOrder);
+    }
+
     public void DecsendingOrderTraversal()
     {
         DecsendingOrderTraversal(RootNode);
@@ -207,7 +219,7 @@ public class CustomBinaryTree
         {
             return -1;
         }
-        
+
         int rightHeight = GetHeight(node.Right);
         if (rightHeight == -1)
         {
@@ -230,7 +242,7 @@ public class CustomBinaryTree
     {
         if (target == null)
         {
-            return -1;    
+            return -1;
         }
         Challenge? node = RootNode;
         int i = 0;
@@ -238,12 +250,12 @@ public class CustomBinaryTree
         {
             if (target.Difficulty > node?.Difficulty)
             {
-                node=node.Right;
+                node = node.Right;
             }
-            else node=node?.Left;
+            else node = node?.Left;
             i++;
         }
-        
+
         return i;
     }
 
@@ -320,15 +332,34 @@ public class CustomBinaryTree
 
     public void Rebalance()
     {
+        List<Challenge> challengesInOrder = new List<Challenge>();
+        InOrderTraversalList(RootNode, challengesInOrder);
 
+        RootNode = null;
+        RebalanceRecursive(challengesInOrder, 0, challengesInOrder.Count - 1);
     }
+
+    public void RebalanceRecursive(List<Challenge> challengesInOrder, int start, int end)
+    {
+        if (start > end)
+        {
+            return;
+        }
+
+        int mid = (start + end) / 2;
+        Insert(challengesInOrder[mid]);
+
+        RebalanceRecursive(challengesInOrder, start, mid - 1);
+        RebalanceRecursive(challengesInOrder, mid + 1, end);
+    }
+    
 
     public Challenge ClosestNode(int target)
     {
         return ClosestNodeRecursive(RootNode, target, RootNode);
     }
 
-    
+
     private Challenge ClosestNodeRecursive(Challenge node, double target, Challenge closest)
     {
         if (node == null)
