@@ -28,19 +28,33 @@ public class Room
 
     public List<Item> LootRoom()
     {
+        bool alreadyHasHealthPotion = false;
         if (Looted)
         {
             Console.WriteLine("This room has already been looted.");
             return loot;
         }
         Random rand = new Random();
-        int lootCount = rand.Next(0, 4); 
+        int lootCount = rand.Next(0, 4);
         for (int i = 0; i < lootCount; i++)
         {
             int randomIndex = rand.Next(possibleLoot.Count);
             Item randomItem = possibleLoot[randomIndex];
-            loot.Add(randomItem);
-            possibleLoot.RemoveAt(randomIndex); 
+            if (randomItem.Name.Contains("Health Potion") && alreadyHasHealthPotion)
+            {
+                continue;
+            }
+            else if (randomItem.Name.Contains("Health Potion") && !alreadyHasHealthPotion)
+            {
+                alreadyHasHealthPotion = true;
+                loot.Add(randomItem);
+                possibleLoot.RemoveAt(randomIndex);
+            }
+            else
+            {
+               loot.Add(randomItem);
+                possibleLoot.RemoveAt(randomIndex); 
+            }
         }
         Looted = true;
         return loot;

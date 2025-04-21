@@ -325,6 +325,17 @@ void StartChallenge(Challenge challenge)
 void Loot()
 {
     List<Item> lootFound = currentRoom.LootRoom();
+    Random treasureRandom = new Random();
+    int treasureChance = treasureRandom.Next(0, 100);
+    if (treasureChance < 10)
+    {
+        Treasure treasureFound = (Treasure)treasureRandom.Next(0, 3);
+        if (treasureFound != Treasure.None)
+        {
+            Console.WriteLine($"You found a treasure: {treasureFound}!");
+            hero.inventory.treasures.Push(treasureFound);
+        }
+    }
     if (lootFound.Count == 0)
     {
         Console.WriteLine("No loot found in this room.");

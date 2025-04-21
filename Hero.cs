@@ -5,6 +5,7 @@ public class Hero
     public int Intelligence { get; set; }
     public int Health { get; set; }
     public Inventory inventory { get; set; }
+    
 
     public Hero(int strength, int agility, int intelligence, int health, Inventory i)
     {

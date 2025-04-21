@@ -3,11 +3,13 @@ public class Inventory
     public Queue<Item> items;
     public Queue<Item> newItems;
     public int Max = 5;
+    public Stack<Treasure> treasures;
 
     public Inventory()
     {
         items = new Queue<Item>();
         newItems = new Queue<Item>();
+        treasures = new Stack<Treasure>();
     }
 
     public void AddItem(Item item)
@@ -44,6 +46,14 @@ public class Inventory
             string use = item.EffectOnUse ? "Usable" : "Passive Effect";
             Console.WriteLine($"{item.Name,-20} {item.Aeffect,-10} {item.Ieffect,-15} {item.Seffect,-10} {item.Heffect,-10} {item.Type,-20}{use,-25}");
         }
+        if (treasures.Count != 0)
+        {
+            Console.WriteLine("Treasure can be used:" + treasures.Peek().ToString());
+        }
+        else
+        {
+            Console.WriteLine("No treasures in inventory.");
+        }
     }
 
     public void InitializeInventory()
@@ -57,7 +67,8 @@ public class Inventory
         Console.WriteLine(@"What do you want to do?
         1. Use item
         2. Remove item
-        3. Exit inventory");
+        3. Use Treasure
+        4. Exit inventory");
         ConsoleKeyInfo keyInfo = Console.ReadKey(true);
         switch (keyInfo.Key)
         {
@@ -70,6 +81,18 @@ public class Inventory
                 h.UpdateHeroStats();
                 break;
             case ConsoleKey.D3:
+                if (treasures.Count > 0)
+                {
+                    Console.WriteLine("Using treasure...");
+                    Treasure t = treasures.Pop();
+                    UseTreasure(t, h);
+                }
+                else
+                {
+                    Console.WriteLine("No treasures to use.");
+                }
+                break;
+            case ConsoleKey.D4:
                 Console.WriteLine("Exiting inventory...");
                 break;
             default:
@@ -133,19 +156,19 @@ public class Inventory
 
             if (item.EffectOnUse == false)
             {
-                if(item.Aeffect != 0)
+                if (item.Aeffect != 0)
                 {
                     h.Agility -= item.Aeffect;
                 }
-                if(item.Ieffect != 0)
+                if (item.Ieffect != 0)
                 {
                     h.Intelligence -= item.Ieffect;
                 }
-                if(item.Seffect != 0)
+                if (item.Seffect != 0)
                 {
                     h.Strength -= item.Seffect;
                 }
-                if(item.Heffect != 0)
+                if (item.Heffect != 0)
                 {
                     h.Health -= item.Heffect;
                 }
@@ -183,5 +206,67 @@ public class Inventory
             }
         }
         return null;
+    }
+
+    public void UseTreasure(Treasure t, Hero h)
+    {
+        if (t == Treasure.Gold)
+        {
+            Console.WriteLine("You used Gold!");
+            Console.WriteLine(@"Pick an attribute to increase by 2
+            1. Strength
+            2. Agility
+            3. Intelligence
+            4. Health");
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            switch (keyInfo.Key)
+            {
+                case ConsoleKey.D1:
+                    h.Strength += 2;
+                    break;
+                case ConsoleKey.D2:
+                    h.Agility += 2;
+                    break;
+                case ConsoleKey.D3:
+                    h.Intelligence += 2;
+                    break;
+                case ConsoleKey.D4:
+                    h.Health += 2;
+                    break;
+                default:
+                    Console.WriteLine("Invalid option. Please try again.");
+                    break;
+            }
+            Console.WriteLine($"Your new stats are: Strength: {h.Strength}, Agility: {h.Agility}, Intelligence: {h.Intelligence}, Health: {h.Health}");
+        }
+        else if (t == Treasure.Gems)
+        {
+            Console.WriteLine("You used Gems!");
+            Console.WriteLine(@"Pick an attribute to increase by 5
+            1. Strength
+            2. Agility
+            3. Intelligence
+            4. Health");
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            switch (keyInfo.Key)
+            {
+                case ConsoleKey.D1:
+                    h.Strength += 5;
+                    break;
+                case ConsoleKey.D2:
+                    h.Agility += 5;
+                    break;
+                case ConsoleKey.D3:
+                    h.Intelligence += 5;
+                    break;
+                case ConsoleKey.D4:
+                    h.Health += 5;
+                    break;
+                default:
+                    Console.WriteLine("Invalid option. Please try again.");
+                    break;
+            }
+            Console.WriteLine($"Your new stats are: Strength: {h.Strength}, Agility: {h.Agility}, Intelligence: {h.Intelligence}, Health: {h.Health}");
+        }
     }
 }
