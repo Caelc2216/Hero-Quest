@@ -256,14 +256,15 @@
                     break;
                 }
             }
+
         }
 
-        CanReachExit(rooms, start, end);
+        CanReachExit(rooms, start, end, path);
         return path;
 
     }
 
-    public void CanReachExit(List<Room> rooms, Room start, Room end)
+    public void CanReachExit(List<Room> rooms, Room start, Room end, List<Room> pathOut)
     {
         List<Room> canReachExit = new List<Room>();
         List<Room> cannotReach = new List<Room>();
@@ -271,7 +272,10 @@
         {
             if (BFS(room, end))
             {
-                canReachExit.Add(room);
+                if (!pathOut.Contains(room))
+                {
+                    canReachExit.Add(room);
+                }
             }
             else
             {
@@ -281,7 +285,7 @@
 
         for (int i = 0; i < cannotReach.Count; i++)
         {
-            Random rand = new ();
+            Random rand = new();
             AddPath(cannotReach[i], new Edge(canReachExit[rand.Next(canReachExit.Count)]));
         }
     }

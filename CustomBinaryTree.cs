@@ -19,7 +19,7 @@ public class CustomBinaryTree
     {
         if (node == null)
         {
-            return new Challenge();
+            return data;
         }
 
         if (data.Difficulty < node.Difficulty)

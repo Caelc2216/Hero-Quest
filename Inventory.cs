@@ -60,6 +60,7 @@ public class Inventory
     {
         AddItem(new Item("Sword", seffect: 5, type: Item.ItemType.Weapon, effectOnUse: false));
         AddItem(new Item("Shield", heffect: 10, type: Item.ItemType.Armor, effectOnUse: false));
+        AddItem(new Item("Lockpick", true, type: Item.ItemType.Miscellaneous));
     }
 
     public void InventorySelection(Hero h)
@@ -138,12 +139,17 @@ public class Inventory
 
     public void RemoveItem(Item item, Hero h)
     {
+        bool found = false;
         if (items.Contains(item))
         {
             Queue<Item> tempQueue = new Queue<Item>();
             foreach (var i in items)
             {
-                if (i.Name != item.Name)
+                if(i.Name == item.Name && found == false)
+                {
+                    found = true;
+                }
+                else
                 {
                     tempQueue.Enqueue(i);
                 }
@@ -237,7 +243,10 @@ public class Inventory
                     Console.WriteLine("Invalid option. Please try again.");
                     break;
             }
-            Console.WriteLine($"Your new stats are: Strength: {h.Strength}, Agility: {h.Agility}, Intelligence: {h.Intelligence}, Health: {h.Health}");
+            Console.WriteLine($"Your new stats are: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"Strength: {h.Strength}, Agility: {h.Agility}, Intelligence: {h.Intelligence}, Health: {h.Health}");
+            Console.ResetColor();
         }
         else if (t == Treasure.Gems)
         {
