@@ -124,7 +124,7 @@ public class CustomBinaryTree
         }
     }
 
-    public Challenge Search(int target)
+    public Challenge? Search(int target)
     {
         return SearchRecursive(RootNode, target);
     }
@@ -261,7 +261,7 @@ public class CustomBinaryTree
 
 
 
-    public Challenge SearchRecursive(Challenge? node, int target)
+    public Challenge? SearchRecursive(Challenge? node, int target)
     {
 
         if (node == null)
@@ -331,7 +331,7 @@ public class CustomBinaryTree
     }
 
     public void Rebalance()
-    {
+    {    
         List<Challenge> challengesInOrder = new List<Challenge>();
         InOrderTraversalList(RootNode, challengesInOrder);
 
@@ -341,32 +341,50 @@ public class CustomBinaryTree
 
     public void RebalanceRecursive(List<Challenge> challengesInOrder, int start, int end)
     {
-        if (start > end)
-        {
-            return;
-        }
-
-        int mid = (start + end) / 2;
-        Insert(challengesInOrder[mid]);
-
-        RebalanceRecursive(challengesInOrder, start, mid - 1);
-        RebalanceRecursive(challengesInOrder, mid + 1, end);
+    if (start > end)
+    {
+        return;
     }
+
+    int mid = (start + end) / 2;
+
+    Challenge original = challengesInOrder[mid];
+    Challenge newChallenge = new Challenge
+    {
+        Difficulty = original.Difficulty,
+        Type = original.Type
+    };
+
+    Insert(newChallenge);
+
+    RebalanceRecursive(challengesInOrder, start, mid - 1);
+    RebalanceRecursive(challengesInOrder, mid + 1, end);
+    }
+        // if (start > end)
+        // {
+        //     return;
+        // }
+
+        // int mid = (start + end) / 2;
+        // Insert(challengesInOrder[mid]);
+
+        // RebalanceRecursive(challengesInOrder, start, mid - 1);
+        // RebalanceRecursive(challengesInOrder, mid + 1, end);
     
 
-    public Challenge ClosestNode(int target)
+    public Challenge? ClosestNode(int target)
     {
         return ClosestNodeRecursive(RootNode, target, RootNode);
     }
 
 
-    private Challenge ClosestNodeRecursive(Challenge node, double target, Challenge closest)
+    private Challenge? ClosestNodeRecursive(Challenge? node, double target, Challenge? closest)
     {
         if (node == null)
             return closest;
 
         // Update closest if current node is closer to target
-        if (Math.Abs(node.Difficulty - target) < Math.Abs(closest.Difficulty - target))
+        if (closest != null && Math.Abs(node.Difficulty - target) < Math.Abs(closest.Difficulty - target))
         {
             closest = node;
         }

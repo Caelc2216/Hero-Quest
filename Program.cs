@@ -6,6 +6,7 @@ List<Room> pathOut = m.InitializeMap(20, 0.002);
 Room previousRoom = null;
 List<Room> deadEnds = new List<Room>();
 Stack<Room> visitedRooms = new Stack<Room>();
+int challengesDeleted = 0;
 
 
 StartGame();
@@ -202,7 +203,7 @@ void GetChallenge(Room room)
         Console.WriteLine("You have found the exit but first you need to complete the challenge!");
         Console.WriteLine("Press any key to start the challenge...");
         Console.ReadKey(true);
-        if (room.challenge == null)
+        if (room.challenge == null && challenges != null)
         {
             room.challenge = challenges.ClosestNode(room.Number);
             StartChallenge(room.challenge);
@@ -317,24 +318,47 @@ void StartChallenge(Challenge challenge)
         Environment.Exit(0);
     }
     challenges.DeleteNode(challenge);
-    challenges.Rebalance();
+    challengesDeleted++;
+    if (challengesDeleted % 5 == 0)
+    {
+        challenges.Rebalance();
+    }
     Console.WriteLine("Press any key to continue...");
     Console.ReadKey(true);
 }
 
 void Loot()
 {
+    if(currentRoom == null)
+    {
+        return;
+    }
     List<Item> lootFound = currentRoom.LootRoom();
     Random treasureRandom = new Random();
-    int treasureChance = treasureRandom.Next(0, 100);
-    if (treasureChance < 10)
+    if (currentRoom.TreasureSearch == false)
     {
-        Treasure treasureFound = (Treasure)treasureRandom.Next(0, 3);
-        if (treasureFound != Treasure.None)
+        Console.WriteLine("Searching for treasure....");
+        int treasureChance = treasureRandom.Next(0, 100);
+        if (treasureChance < 10)
         {
-            Console.WriteLine($"You found a treasure: {treasureFound}!");
-            hero.inventory.treasures.Push(treasureFound);
+            Treasure treasureFound = (Treasure)treasureRandom.Next(0, 3);
+            if (treasureFound != Treasure.None)
+            {
+                Console.WriteLine($"You found a treasure: {treasureFound}!");
+                Console.WriteLine("Press any key to add it to your inventory...");
+                Console.ReadKey(true);
+                hero.inventory.treasures.Push(treasureFound);
+                Console.Clear();
+            }
         }
+        else
+        {
+            Console.WriteLine("No treasure found.");
+            Console.WriteLine("Press any key to continue looting...");
+            Console.ReadKey(true);
+            Console.Clear();
+        }
+        currentRoom.TreasureSearch = true;
     }
     if (lootFound.Count == 0)
     {

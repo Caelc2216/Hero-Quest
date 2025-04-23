@@ -7,6 +7,7 @@ public class Room
     public bool IsStart { get; set; }
     public bool IsExit { get; set; }
     public bool Looted = false;
+    public bool TreasureSearch = false;
     public bool ChallengeFinished = false;
     public Challenge challenge = null;
     public List<Item> loot = new List<Item>();
