@@ -12,3 +12,6 @@ Searching a List:   O(N)
 
 BFS in a BST:   Time: O(N)
                 Space: O(N)
+
+Dictionary Search:  Average Case: O(1)
+                    Worst Case: O(N)    
