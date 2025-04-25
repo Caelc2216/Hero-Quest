@@ -59,7 +59,6 @@ public class Inventory
     public void InitializeInventory()
     {
         AddItem(new Item("Sword", seffect: 5, type: Item.ItemType.Weapon, effectOnUse: false));
-        AddItem(new Item("Shield", heffect: 10, type: Item.ItemType.Armor, effectOnUse: false));
         AddItem(new Item("Lockpick", true, type: Item.ItemType.Miscellaneous));
     }
 

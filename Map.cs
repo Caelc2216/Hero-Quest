@@ -91,11 +91,6 @@
                 }
 
                 path.Reverse();
-                Console.Write("Path: ");
-                foreach (var item in path)
-                {
-                    Console.Write($"{item} ");
-                }
                 return true;
             }
 

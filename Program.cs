@@ -206,6 +206,10 @@ void GetChallenge(Room room)
         if (room.challenge == null && challenges != null)
         {
             room.challenge = challenges.ClosestNode(room.Number);
+            if(room.challenge == null)
+            {
+                room.challenge = new Challenge();
+            }
             StartChallenge(room.challenge);
         }
 
